@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include "math.h"
 #include "song.h"
 using namespace std;
 
@@ -21,12 +20,12 @@ void findNextSongs(Song original, Song songArray[], int numSongs) {
     Song potentialSongs[100];
     string camelotArray[24] = {"1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B", "5A", "5B", "6A", "6B", "7A", "7B", "8A", "9A", "9B", "10A", "10B", "11A", "11B", "12A", "12B"};
 
-    cout << "------------------------" << endl;
     cout << "Original Song: " << endl;
+    cout << "------------------------" << endl;
     original.displayInfo();
     cout << endl;
+    cout << "Suggested Next Song(s): " << endl;
     cout << "------------------------" << endl;
-    cout << "Suggested Next Songs: " << endl;
 
     int numPotential = 0;
 
@@ -110,14 +109,24 @@ void findNextSongs(Song original, Song songArray[], int numSongs) {
 }
 
 
-int main() {
+int main(int argc, char* argv[]) {
+    if (argc != 2) {
+        if (argc < 2) {
+            cout << "No File Detected! Please try again!" << endl;
+            return 1;
+        }
+        if (argc > 2) {
+            cout << "Too Many Files Detected! Please try again and only input one file!" << endl;
+            return 1;
+        }
+    }
     system("clear");
     int numSongs = 0;
     Song songArray[100];
     string camelotArray[24] = {"1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B", "5A", "5B", "6A", "6B", "7A", "7B", "8A", "9A", "9B", "10A", "10B", "11A", "11B", "12A", "12B"};
-    string selection;
+    string fileToOpen = argv[1];
 
-    ifstream file("file.csv");
+    ifstream file(fileToOpen);
     if (!file.is_open()) {
         cerr << "File couldn't be opened!" << endl;
         return 1;
@@ -140,17 +149,23 @@ int main() {
 
     while (true) {
         string input = songInput();
+        bool found = false;
 
         if (input == "0") {
             system("clear");
             break;
         }
         else {
+            system("clear");
             for (int i = 0; i < numSongs; i += 1) {
                 if (songArray[i].getSongName() == input) {
+                    found = true;
                     Song first = songArray[i];
                     findNextSongs(first, songArray, numSongs);
                 }
+            }
+            if (!found) {
+                cout << "Could not find song! Please double-check your spelling and capitalization and try again :)" << endl;
             }
         }
     }
